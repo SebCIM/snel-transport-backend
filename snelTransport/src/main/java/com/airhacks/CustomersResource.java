@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Array;
+import javax.json.JsonArrayBuilder;
 
 /**
  *
@@ -49,53 +50,21 @@ public class CustomersResource {
 
         String clientInfo = "";
         String clientInfoReplace = "";
-        Object customerOne = null;
+        JsonArrayBuilder JsonBuild = Json.createArrayBuilder();
         
         // iterate via "for loop"
         for (int i = 0; i < list.size(); i++) {
             // System.out.println(list.get(i));
-            customerOne = list.get(i);
+//            customerOne = list.get(i);
             clientInfo = mapper.writeValueAsString(list.get(i));
-            clientInfoReplace = clientInfo.replace("\"", "");
-            clientInfoReplace = clientInfoReplace.replace("[", "");
-            clientInfoReplace = clientInfoReplace.replace("]", "");
+            clientInfoReplace = clientInfo.replaceAll("[\\[\\]\\\\\"]","");
             String[] splitClientInfo = clientInfoReplace.split(",");
-            
-            
-//            for (int j = 0; j < splitClientInfo.length(); j++) {
-//                String s = splitClientInfo[0];
-//                s = s.replace("[", "");
-//                //s = s.replace("", "");
-//                //s = s.replace("[", "");
-//
-//                System.out.println(s);
-//            }
-            
+
             System.out.println(clientInfo);
-            System.out.print(splitClientInfo[5]);
-            
-            // System.out.println(customerOne.);
-//            for (int j = 0; j < list.size(); j++) {
-//                
-//            }
- 
-//            customerName = list.get(i).getClass().getName();
-//            jsonInString = mapper.writeValueAsString(list.get(i));
-//            System.out.println(jsonInString);
-            
-//            for (int j = 0; j < clientObject.size(); j++) {
-//                jsonInString = mapper.writeValueAsString(clientObject.get(i));
-//            
-//                System.out.println(jsonInString);
-//            }
+           
+            JsonBuild.add(customer(Integer.parseInt(splitClientInfo[0]),splitClientInfo[1], splitClientInfo[2], splitClientInfo[3], splitClientInfo[4], splitClientInfo[5], splitClientInfo[6], splitClientInfo[7]));
         }
-
-        
-
-        return Json.createArrayBuilder().
-                add(customer(1,"Kantoor Snel Transport / Distributiecentrum", "Zeugstraat", "92", "2801JD", "St Domusstraat", "0182512784", "")).
-                add(customer(2, "PC-markt Almere","Jacob van Lennepstraat", "46", "1053HL", "Amsterdam", "0203456456", "")).
-                build();
+            return JsonBuild.build();
     }
     
     public JsonObject customer(int code, String name, String adres, String houseNum, String postcode, String city, String telNum, String faxNum) {
@@ -108,7 +77,6 @@ public class CustomersResource {
                 add("zipCode", postcode).
                 add("telNum", telNum).
                 add("faxNum", faxNum).
-                
                 build();
     }
 }
